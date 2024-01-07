@@ -14,17 +14,23 @@ import { useEffect } from "react";
 import Chat from "./Chat";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
+// Component for the Start screen of the app
 const Start = ({ navigation }) => {
+  // State for user's name and selected background color
   const [name, setName] = useState("");
   const [background, setBackground] = useState("");
+  // Array of color options for background
   const colors = ["#090C08", "#474056", "#8A95A5", "#B9C6AE"];
 
+  // Function to set the background color
   const handleColorSelect = (color) => {
     setBackground(color);
   };
 
+  // Background image for the screen
   const backimage = require("../assets/backgroundimage.png");
-  // Background image for the whole screen
+
+  // Main render method
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -36,15 +42,19 @@ const Start = ({ navigation }) => {
         resizeMode="cover"
         style={styles.bigContainer}
       >
+        {/* Title of the app */}
         <Text style={styles.title}>Chitchat App</Text>
 
+        {/* Container for user input and options */}
         <View style={styles.whiteContainer}>
+          {/* Icon for the input field */}
           <Icon
             name="person"
             size={25}
             color="#757083"
             style={styles.iconStyle}
           />
+          {/* Text input for the user's name */}
           <TextInput
             style={styles.textInput}
             value={name}
@@ -52,7 +62,9 @@ const Start = ({ navigation }) => {
             placeholder="Your Name"
           />
 
+          {/* Text prompting user to choose a background color */}
           <Text style={styles.selectedColorText}>Choose Background Color:</Text>
+          {/* Color options */}
           <View style={styles.colorContainer}>
             {colors.map((color, index) => (
               <TouchableOpacity
@@ -67,6 +79,7 @@ const Start = ({ navigation }) => {
             ))}
           </View>
 
+          {/* Button to start chatting */}
           <TouchableOpacity
             style={styles.buttonStart}
             onPress={() =>
@@ -84,17 +97,21 @@ const Start = ({ navigation }) => {
   );
 };
 
+// Stylesheet for the Start component
 const styles = StyleSheet.create({
+  // General background style for the app
   background: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
   },
+  // Style for the main container of the screen
   bigContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-end",
   },
+  // Style for the app's title text
   title: {
     position: "absolute",
     fontSize: 45,
@@ -102,6 +119,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     top: 110,
   },
+  // Style for the white container holding user inputs
   whiteContainer: {
     position: "relative",
     width: "88%",
@@ -110,6 +128,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     marginBottom: 30,
   },
+  // Style for the text input where user enters their name
   textInput: {
     width: "88%",
     borderWidth: 2,
@@ -122,6 +141,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
     paddingLeft: 45,
   },
+  // Style for the icon next to the text input
   iconStyle: {
     position: "absolute",
     top: 26,
@@ -129,6 +149,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     opacity: 0.7,
   },
+  // Style for the text indicating color selection
   selectedColorText: {
     fontSize: 16,
     fontWeight: "300",
@@ -138,22 +159,26 @@ const styles = StyleSheet.create({
     opacity: 1,
     marginTop: 25,
   },
+  // Style for the container of color options
   colorContainer: {
     alignSelf: "flex-start",
     flexDirection: "row",
     marginLeft: 10,
   },
+  // Style for each color selection circle
   colorCircle: {
     width: 45,
     height: 45,
     borderRadius: 25,
     margin: 10,
   },
+  // Style for highlighting selected color
   selectedColor: {
     borderWidth: 3,
     borderColor: "#757083",
     opacity: 0.7,
   },
+  // Style for the 'Start Chatting' button
   buttonStart: {
     marginTop: 25,
     marginBottom: 15,
@@ -166,6 +191,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     justifyContent: "center",
   },
+  // Style for the text inside the 'Start Chatting' button
   textButton: {
     fontSize: 18,
     fontWeight: "600",
