@@ -157,3 +157,5 @@ vendor/
 .circleci/generated_config.yml
 .circleci/storage
 node_modules
+
+.expo

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 
 const Chat = ({ route, navigation }) => {
   const { name } = route.params;
@@ -13,7 +13,7 @@ const Chat = ({ route, navigation }) => {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <Text>Chat Screen</Text>
+      <Text style={{ fontSize: "30", color: "yellow" }}>Hello {name}</Text>
     </View>
   );
 };
