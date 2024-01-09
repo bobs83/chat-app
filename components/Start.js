@@ -9,18 +9,38 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
-import { useEffect } from "react";
-import Chat from "./Chat";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 // Component for the Start screen of the app
 const Start = ({ navigation }) => {
+  // Get the auth service for the default app
+  const auth = getAuth();
   // State for user's name and selected background color
   const [name, setName] = useState("");
   const [background, setBackground] = useState("");
   // Array of color options for background
   const colors = ["#090C08", "#474056", "#8A95A5", "#B9C6AE"];
+
+  // Function to sign in anonymously
+
+  // After the user successfully signs in, the app transitions to the Chat screen and passes result.user.uid as a route parameter, assigning it to userID. This is the unique ID for the user that will be used to query the shopping lists from the database.
+  const signInUser = () => {
+    signInAnonymously(auth)
+      .then((result) => {
+        navigation.navigate("Chat", {
+          name: name,
+          backgroundColor: background,
+          userID: result.user.uid,
+        });
+        Alert.alert("Signed in Successfully!");
+      })
+      .catch((error) => {
+        Alert.alert("Unable to sign in, try later again.");
+      });
+  };
 
   // Function to set the background color
   const handleColorSelect = (color) => {
@@ -80,15 +100,7 @@ const Start = ({ navigation }) => {
           </View>
 
           {/* Button to start chatting */}
-          <TouchableOpacity
-            style={styles.buttonStart}
-            onPress={() =>
-              navigation.navigate("Chat", {
-                name: name,
-                backgroundColor: background,
-              })
-            }
-          >
+          <TouchableOpacity style={styles.buttonStart} onPress={signInUser}>
             <Text style={styles.textButton}>Start Chatting</Text>
           </TouchableOpacity>
         </View>
