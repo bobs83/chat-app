@@ -2,23 +2,26 @@ import React, { useEffect, useState, useCallback } from "react";
 import { StyleSheet, View, Platform, KeyboardAvoidingView } from "react-native";
 import { Bubble, GiftedChat } from "react-native-gifted-chat";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  collection,
+  query,
+  addDoc,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
 
-const Chat = ({ route, navigation }) => {
-  const { name, backgroundColor, bubbleColors } = route.params;
+const Chat = ({ route, navigation, db }) => {
+  const { name, backgroundColor, bubbleColors, userID } = route.params;
   const [messages, setMessages] = useState([]);
 
-  // Debugging: Log the colors being used
-  useEffect(() => {
-    console.log("Background Color:", backgroundColor);
-    console.log("Bubble Colors:", bubbleColors);
-  }, [backgroundColor, bubbleColors]);
-
-  // Send messages
-  const onSend = useCallback((newMessages) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessages)
-    );
-  }, []);
+  // onSend function: Handles sending of a new message
+  const onSend = (newMessages) => {
+    // Add the first message in newMessages array to the Firestore 'messages' collection
+    // db: Reference to the Firestore database
+    // "messages": Name of the collection where messages are stored
+    // newMessages[0]: The newest message to be sent, assuming newMessages is an array of message objects
+    addDoc(collection(db, "messages"), newMessages[0]);
+  };
 
   // Customize message bubble
   const renderBubble = (props) => (
@@ -36,25 +39,44 @@ const Chat = ({ route, navigation }) => {
     navigation.setOptions({ title: name });
   }, [name, navigation]);
 
-  // Default messages
+  // // Default messages
+  // useEffect(() => {
+  //   setMessages([
+  //     {
+  //       _id: 1,
+  //       text: "Welcom developer, I am a chatbot",
+  //       createdAt: new Date(),
+  //       user: {
+  //         _id: 2,
+  //         name: "A I",
+  //       },
+  //     },
+  //     {
+  //       _id: 2,
+  //       text: "Automated Notification",
+  //       createdAt: new Date(),
+  //       system: true,
+  //     },
+  //   ]);
+  // }, []);
+
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: "Hello developer",
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: "A I",
-        },
-      },
-      {
-        _id: 2,
-        text: "Automated Notification",
-        createdAt: new Date(),
-        system: true,
-      },
-    ]);
+    navigation.setOptions({ title: name });
+    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+    const unsubMessages = onSnapshot(q, (docs) => {
+      let newMessages = [];
+      docs.forEach((doc) => {
+        newMessages.push({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: new Date(doc.data().createdAt.toMillis()),
+        });
+      });
+      setMessages(newMessages);
+    });
+    return () => {
+      if (unsubMessages) unsubMessages();
+    };
   }, []);
 
   // Keyboard Avoiding View for different platforms
@@ -70,7 +92,7 @@ const Chat = ({ route, navigation }) => {
       <GiftedChat
         messages={messages}
         onSend={onSend}
-        user={{ _id: 1 }}
+        user={{ _id: userID, name: name }}
         renderBubble={renderBubble}
       />
       {Platform.OS === "android" && (
