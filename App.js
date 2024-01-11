@@ -8,12 +8,41 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 // import firebase
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import {
+  getFirestore,
+  enableNetwork,
+  disableNetwork,
+} from "firebase/firestore";
+
+//Import useNetInfo Hook
+import { useNetInfo } from "@react-native-community/netinfo";
+
+// Import useEffect Hook
+import { useEffect } from "react";
+// Import LogBox and Alert
+import { LogBox, Alert } from "react-native";
+
+LogBox.ignoreLogs(["AsyncStorage has been extracted from"]);
 
 // Create the navigator
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  //state that represents the network connectivity status
+  const connectionStatus = useNetInfo();
+
+  // Get the network state
+  const netInfo = useNetInfo();
+
+  // Enable network
+  useEffect(() => {
+    if (netInfo.isConnected) {
+      enableNetwork(db);
+    } else {
+      disableNetwork(db);
+    }
+  }, [netInfo.isConnected]);
+
   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
   const firebaseConfig = {
     apiKey: "AIzaSyCFPexLq4YReETZvDIQGKV4oou7taB5-ZE",
@@ -31,12 +60,28 @@ export default function App() {
   // Initialize Cloud Firestore and get a reference to the service
   const db = getFirestore(app);
 
+  //will display an alert popup if connection is lost
+  useEffect(() => {
+    if (connectionStatus.isConnected === false) {
+      Alert.alert("Connection lost!");
+      disableNetwork(db);
+    } else if (connectionStatus.isConnected === true) {
+      enableNetwork(db);
+    }
+  }, [connectionStatus.isConnected]);
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Start">
         <Stack.Screen name="Start" component={Start} />
         <Stack.Screen name="Chat">
-          {(props) => <Chat db={db} {...props} />}
+          {(props) => (
+            <Chat
+              isConnected={connectionStatus.isConnected}
+              db={db}
+              {...props}
+            />
+          )}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
