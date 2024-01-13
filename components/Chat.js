@@ -1,3 +1,4 @@
+import CustomActions from "./ CustomActions";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Platform, KeyboardAvoidingView } from "react-native";
 import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
@@ -10,26 +11,28 @@ import {
   orderBy,
 } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MapView from "react-native-maps";
 
-const Chat = ({ route, isConnected, db, navigation }) => {
+// Chat component: Handles the chat interface
+const Chat = ({ route, isConnected, db, navigation, storage }) => {
+  // Load cached lists from local storage
   const loadCachedLists = async () => {
     const cachedLists = (await AsyncStorage.getItem("messages")) || [];
     setLists(JSON.parse(cachedLists));
   };
 
+  // Extract parameters from navigation route
   const { name, backgroundColor, bubbleColors, userID } = route.params;
+  // State to hold messages
   const [messages, setMessages] = useState([]);
 
   // onSend function: Handles sending of a new message
   const onSend = (newMessages) => {
     // Add the first message in newMessages array to the Firestore 'messages' collection
-    // db: Reference to the Firestore database
-    // "messages": Name of the collection where messages are stored
-    // newMessages[0]: The newest message to be sent, assuming newMessages is an array of message objects
     addDoc(collection(db, "messages"), newMessages[0]);
   };
 
-  // Customize message bubble
+  // Customize message bubble appearance
   const renderBubble = (props) => (
     <Bubble
       {...props}
@@ -40,7 +43,7 @@ const Chat = ({ route, isConnected, db, navigation }) => {
     />
   );
 
-  //to push messages to storage
+  // Function to cache messages in local storage
   const cacheMessages = async (messagesToCache) => {
     try {
       await AsyncStorage.setItem("messages", JSON.stringify(messagesToCache));
@@ -48,44 +51,49 @@ const Chat = ({ route, isConnected, db, navigation }) => {
       console.log(error.message);
     }
   };
-  //to get messages from storage
+
+  // Function to load messages from local storage
   const loadCachedMessages = async () => {
     const cachedMessages = (await AsyncStorage.getItem("messages")) || [];
     setMessages(JSON.parse(cachedMessages));
   };
 
-  //to hide input field when user offline
+  // Conditional rendering of input toolbar based on connectivity
   const renderInputToolBar = (props) => {
     if (isConnected) return <InputToolbar {...props} />;
     else return null;
   };
 
-  // Set the navigation title
+  // Render custom actions (like sending images, etc.)
+  const renderCustomActions = (props) => {
+    return <CustomActions storage={storage} {...props} />;
+  };
+
+  // Render custom view for messages (like map view for location messages)
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  };
+
+  // Set the navigation title using useEffect
   useEffect(() => {
     navigation.setOptions({ title: name });
   }, [name, navigation]);
 
-  // // Default messages
-  // useEffect(() => {
-  //   setMessages([
-  //     {
-  //       _id: 1,
-  //       text: "Welcom developer, I am a chatbot",
-  //       createdAt: new Date(),
-  //       user: {
-  //         _id: 2,
-  //         name: "A I",
-  //       },
-  //     },
-  //     {
-  //       _id: 2,
-  //       text: "Automated Notification",
-  //       createdAt: new Date(),
-  //       system: true,
-  //     },
-  //   ]);
-  // }, []);
-
+  // Fetching and caching messages from Firestore or local storage based on connectivity
   let unsubMessages;
   useEffect(() => {
     // when there is connection fetch data from db otherwise fetch from AsyncStorage
@@ -113,7 +121,7 @@ const Chat = ({ route, isConnected, db, navigation }) => {
     return () => {
       if (unsubMessages) unsubMessages();
     };
-  }, []); // tested with [isConnected] as dependency not working
+  }, [isConnected]); // Dependency array
 
   // Keyboard Avoiding View for different platforms
   const keyboardAvoidingViewProps = Platform.select({
@@ -121,16 +129,22 @@ const Chat = ({ route, isConnected, db, navigation }) => {
     android: { behavior: "height" },
   });
 
+  // Main component rendering
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: backgroundColor || "#fff" }]}
     >
       <GiftedChat
-        renderInputToolbar={renderInputToolBar}
         messages={messages}
-        onSend={onSend}
-        user={{ _id: userID, name: name }}
         renderBubble={renderBubble}
+        renderInputToolbar={renderInputToolBar}
+        onSend={(messages) => onSend(messages)}
+        renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
+        user={{
+          _id: userID,
+          name: name,
+        }}
       />
       {Platform.OS === "android" && (
         <KeyboardAvoidingView {...keyboardAvoidingViewProps} />
@@ -139,6 +153,7 @@ const Chat = ({ route, isConnected, db, navigation }) => {
   );
 };
 
+// Styles for the component
 const styles = StyleSheet.create({
   container: {
     flex: 1,
