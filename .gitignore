@@ -159,3 +159,5 @@ vendor/
 node_modules
 
 .expo
+
+/other

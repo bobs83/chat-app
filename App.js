@@ -14,6 +14,8 @@ import {
   disableNetwork,
 } from "firebase/firestore";
 
+import { getStorage } from "firebase/storage";
+
 //Import useNetInfo Hook
 import { useNetInfo } from "@react-native-community/netinfo";
 
@@ -27,7 +29,7 @@ LogBox.ignoreLogs(["AsyncStorage has been extracted from"]);
 // Create the navigator
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+const App = () => {
   //state that represents the network connectivity status
   const connectionStatus = useNetInfo();
 
@@ -60,6 +62,9 @@ export default function App() {
   // Initialize Cloud Firestore and get a reference to the service
   const db = getFirestore(app);
 
+  // Initialize Cloud Storage and get a reference to the service
+  const storage = getStorage(app);
+
   //will display an alert popup if connection is lost
   useEffect(() => {
     if (connectionStatus.isConnected === false) {
@@ -79,6 +84,7 @@ export default function App() {
             <Chat
               isConnected={connectionStatus.isConnected}
               db={db}
+              storage={storage}
               {...props}
             />
           )}
@@ -86,4 +92,6 @@ export default function App() {
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
+
+export default App;
