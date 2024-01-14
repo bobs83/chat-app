@@ -63,7 +63,7 @@ const Start = ({ navigation }) => {
         style={styles.bigContainer}
       >
         {/* Title of the app */}
-        <Text style={styles.title}>Chitchat App</Text>
+        <Text style={styles.title}>Chat App</Text>
 
         {/* Container for user input and options */}
         <View style={styles.whiteContainer}>
@@ -127,9 +127,9 @@ const styles = StyleSheet.create({
   title: {
     position: "absolute",
     fontSize: 45,
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#FFFFFF",
-    top: 110,
+    top: 90,
   },
   // Style for the white container holding user inputs
   whiteContainer: {
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     height: "auto",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
-    marginBottom: 30,
+    marginBottom: 50,
   },
   // Style for the text input where user enters their name
   textInput: {
@@ -146,17 +146,17 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     padding: 15,
     margin: 10,
+    marginTop: 20,
     borderColor: "#757083",
     fontSize: 16,
     fontWeight: "300",
     color: "#757083",
-    opacity: 0.5,
     paddingLeft: 45,
   },
   // Style for the icon next to the text input
   iconStyle: {
     position: "absolute",
-    top: 26,
+    top: 35,
     left: 35,
     zIndex: 1,
     opacity: 0.7,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   // Style for the text indicating color selection
   selectedColorText: {
     fontSize: 16,
-    fontWeight: "300",
+    fontWeight: "400",
     color: "#757083",
     alignSelf: "flex-start",
     marginLeft: 20,
@@ -187,8 +187,8 @@ const styles = StyleSheet.create({
   // Style for highlighting selected color
   selectedColor: {
     borderWidth: 3,
-    borderColor: "#757083",
-    opacity: 0.7,
+    borderColor: "#757084",
+    opacity: 1,
   },
   // Style for the 'Start Chatting' button
   buttonStart: {
