@@ -1,4 +1,4 @@
-import CustomActions from "./ CustomActions";
+import CustomActions from "./CustomActions";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Platform, KeyboardAvoidingView } from "react-native";
 import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";

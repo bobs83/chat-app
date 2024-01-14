@@ -24,7 +24,9 @@ import { useEffect } from "react";
 // Import LogBox and Alert
 import { LogBox, Alert } from "react-native";
 
-LogBox.ignoreLogs(["AsyncStorage has been extracted from"]);
+LogBox.ignoreLogs([
+  "Warning: AsyncStorage has been extracted from react-native core",
+]);
 
 // Create the navigator
 const Stack = createNativeStackNavigator();
