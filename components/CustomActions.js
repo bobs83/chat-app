@@ -1,6 +1,5 @@
-import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, View, StyleSheet, Alert } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import { useState } from "react";
 
 // Importing required modules for image picking, location, and media library
 import * as ImagePicker from "expo-image-picker";
@@ -18,8 +17,6 @@ const CustomActions = ({
   userID,
 }) => {
   const actionSheet = useActionSheet();
-  const [image, setImage] = useState(null);
-  const [location, setLocation] = useState(null);
 
   // Function to upload image to Firebase and send URL
   const uploadAndSendImage = async (imageURI) => {

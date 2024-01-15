@@ -10,26 +10,26 @@ import {
   onSnapshot,
   orderBy,
 } from "firebase/firestore";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import MapView from "react-native-maps";
 
 // Chat component: Handles the chat interface
 const Chat = ({ route, isConnected, db, navigation, storage }) => {
-  // Load cached lists from local storage
-  const loadCachedLists = async () => {
-    const cachedLists = (await AsyncStorage.getItem("messages")) || [];
-    setLists(JSON.parse(cachedLists));
-  };
-
   // Extract parameters from navigation route
   const { name, backgroundColor, bubbleColors, userID } = route.params;
   // State to hold messages
   const [messages, setMessages] = useState([]);
 
-  // onSend function: Handles sending of a new message
-  const onSend = (newMessages) => {
-    // Add the first message in newMessages array to the Firestore 'messages' collection
-    addDoc(collection(db, "messages"), newMessages[0]);
+  const onSend = async (newMessages) => {
+    try {
+      // Add the first message in newMessages array to the Firestore 'messages' collection
+      await addDoc(collection(db, "messages"), newMessages[0]);
+    } catch (error) {
+      console.error("Failed to send message: ", error.message);
+      // Optionally, display an error message to the user
+    }
   };
 
   // Customize message bubble appearance
@@ -48,7 +48,8 @@ const Chat = ({ route, isConnected, db, navigation, storage }) => {
     try {
       await AsyncStorage.setItem("messages", JSON.stringify(messagesToCache));
     } catch (error) {
-      console.log(error.message);
+      console.error("Failed to cache messages: ", error.message);
+      // Optionally, display an error message to the user
     }
   };
 
@@ -88,40 +89,85 @@ const Chat = ({ route, isConnected, db, navigation, storage }) => {
     return null;
   };
 
-  // Set the navigation title using useEffect
-  useEffect(() => {
-    navigation.setOptions({ title: name });
-  }, [name, navigation]);
+  // // Set the navigation title using useEffect
+  // useEffect(() => {
+  //   navigation.setOptions({ title: name });
+  // }, [name, navigation]);
+
+  // let unsubMessages;
+  // useEffect(() => {
+  //   // when there is connection fetch data from db otherwise fetch from AsyncStorage
+  //   if (isConnected === true) {
+  //     // unregister current onSnapshot() listener to avoid registering multiple listeners when useEffect code is re-executed
+  //     if (unsubMessages) unsubMessages();
+  //     unsubMessages = null;
+
+  //     navigation.setOptions({ title: name });
+  //     const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+  //     unsubMessages = onSnapshot(q, (documentsSnapshot) => {
+  //       let newMessages = [];
+  //       documentsSnapshot.forEach((doc) => {
+  //         newMessages.push({
+  //           id: doc.id,
+  //           ...doc.data(),
+  //           createdAt: new Date(doc.data().createdAt.toMillis()),
+  //         });
+  //       });
+  //       cacheMessages(newMessages);
+  //       setMessages(newMessages);
+  //     });
+  //   } else loadCachedMessages();
+
+  //   // Cleanup code
+  //   return () => {
+  //     if (unsubMessages) unsubMessages(); // This invocation is meant to stop listening to changes in the Firestore collection initiated by the onSnapshot call earlier in the useEffect. It's not a traditional unsubscribe, but rather a way to stop the listening process initiated by onSnapshot.
+  //   };
+  // }, [isConnected]);
 
   // Fetching and caching messages from Firestore or local storage based on connectivity
-  let unsubMessages;
   useEffect(() => {
-    // when there is connection fetch data from db otherwise fetch from AsyncStorage
-    if (isConnected === true) {
-      // unregister current onSnapshot() listener to avoid registering multiple listeners when useEffect code is re-executed
-      if (unsubMessages) unsubMessages();
-      unsubMessages = null;
+    console.log("Setting up snapshot listener");
+    let isActive = true;
 
-      navigation.setOptions({ title: name });
-      const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-      unsubMessages = onSnapshot(q, (documentsSnapshot) => {
-        let newMessages = [];
-        documentsSnapshot.forEach((doc) => {
-          newMessages.push({
-            id: doc.id,
-            ...doc.data(),
-            createdAt: new Date(doc.data().createdAt.toMillis()),
-          });
-        });
-        cacheMessages(newMessages);
-        setMessages(newMessages);
-      });
-    } else loadCachedMessages();
+    const messagesQuery = query(
+      collection(db, "messages"),
+      orderBy("createdAt", "desc")
+    );
+
+    const unsubscribe = isConnected
+      ? onSnapshot(
+          messagesQuery,
+          (snapshot) => {
+            const newMessages = snapshot.docs.map((doc) => ({
+              _id: doc.id,
+              ...doc.data(),
+              createdAt: new Date(doc.data().createdAt.toMillis()),
+            }));
+            if (isActive) {
+              console.log("Received snapshot data");
+              cacheMessages(newMessages);
+              setMessages(newMessages);
+            }
+          },
+          (error) => {
+            console.error("Firestore onSnapshot error: ", error);
+          }
+        )
+      : () => {
+          console.log("Unsubscribing from snapshot due to no connectivity");
+        };
+
+    if (!isConnected) {
+      console.log("Loading cached messages");
+      loadCachedMessages();
+    }
 
     return () => {
-      if (unsubMessages) unsubMessages();
+      isActive = false;
+      console.log("Unsubscribing from snapshot");
+      unsubscribe(); // Unsubscribe when the component unmounts or isConnected changes
     };
-  }, [isConnected]); // Dependency array
+  }, [isConnected]); // Ensure useEffect is called only when db or isConnected changes
 
   // Keyboard Avoiding View for different platforms
   const keyboardAvoidingViewProps = Platform.select({
