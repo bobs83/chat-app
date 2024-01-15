@@ -100,7 +100,12 @@ const Start = ({ navigation }) => {
           </View>
 
           {/* Button to start chatting */}
-          <TouchableOpacity style={styles.buttonStart} onPress={signInUser}>
+          <TouchableOpacity
+            style={styles.buttonStart}
+            onPress={signInUser}
+            accessibilityLabel="Start chatting"
+            accessibilityHint="Double tap to begin chatting"
+          >
             <Text style={styles.textButton}>Start Chatting</Text>
           </TouchableOpacity>
         </View>

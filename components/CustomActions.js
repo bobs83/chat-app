@@ -109,7 +109,12 @@ const CustomActions = ({
 
   // Render the component
   return (
-    <TouchableOpacity style={styles.container} onPress={onActionPress}>
+    <TouchableOpacity
+      style={styles.container}
+      accessibilityLabel="Tap me"
+      accessibilityHint="You can choose if you want to pick an image, take a photo or send your location"
+      onPress={onActionPress}
+    >
       <View style={[styles.wrapper, wrapperStyle]}>
         <Text style={[styles.iconText, iconTextStyle]}>+</Text>
       </View>
