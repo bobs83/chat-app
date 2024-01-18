@@ -1,37 +1,51 @@
 # React Native Mobile Chat App
 
-## Project Brief
+## Brief Introduction
+Welcome to the React Native Mobile Chat App! This application offers a modern and user-friendly platform for mobile communication, allowing users to easily send messages, share images, and even their location. Built with React Native and integrated with Firebase, this chat app is designed to provide a seamless chat experience on both Android and iOS devices.
 
-![Project Brief VS Reality ](assets/readmePics/ProjectVSReality.png)
+## Table of Contents
+- [Project Brief](#project-brief)
+- [Approach](#approach)
+- [Objective](#objective)
+- [Design Specifications](#design-specifications)
+- [Technical Requirements](#technical-requirements)
+- [Features](#features)
+- [Chat App In Action - Android / IOS](#chat-app-in-action---android--ios)
+- [Installation and Setup](#installation-and-setup)
+  - [Prerequisites](#prerequisites)
+  - [Node.js Version](#nodejs-version)
+  - [Project Setup](#project-setup)
+- [Firebase Configuration and Using Your Own Database](#firebase-configuration-and-using-your-own-database)
+  - [Firebase Setup](#firebase-setup)
+  - [App Integration](#app-integration)
+- [Running the Project](#running-the-project)
+
+## Project Brief
+![Project Brief VS Reality](assets/readmePics/ProjectVSReality.png)
 
 ## Approach
-
-In this project, I closely followed the design brief to meet every job requirement with care and precision. My focus was on understanding the details and making sure the final work would would be delivered as orderd.
+In this project, I closely followed the design brief to meet every job requirement with care and precision. My focus was on understanding the details and ensuring that the final work would be delivered as ordered.
 
 ## Objective
-
 To develop a mobile chat application using React Native, providing a user-friendly chat interface with image and location sharing capabilities.
 
 ## Design Specifications
-
 - Vertical and horizontal spacing: evenly distributed
 - App title: font size 45, font weight 600, font color #FFFFFF
-- “Your name”: font size 16, font weight 300, font color #757083, 50% opacity
-- “Choose background color”: font size 16, font weight 300, font color #757083, 100% opacity
+- "Your name": font size 16, font weight 300, font color #757083, 50% opacity
+- "Choose background color": font size 16, font weight 300, font color #757083, 100% opacity
 - Color options HEX codes: #090C08; #474056; #8A95A5; #B9C6AE
 - Start chatting button: font size 16, font weight 600, font color #FFFFFF, button color #757083
 
 ## Technical Requirements
-
 - Written in React Native and developed using Expo.
 - Utilizes Google Firestore Database for storing chat conversations.
 - Google Firebase authentication for anonymous user authentication.
 - Local storage of chats.
-- Integration with phone's image library and camera for image sharing.
-- Ability to read user's location data and share it in the chat.
+- Integration with the phone's image library and camera for image sharing.
+- Ability to read the user's location data and share it in the chat.
 
 ## Features
-
 - Easy-to-use chat room access for new users.
 - Options for users to send messages, share images, and locations.
 - Offline message access.
@@ -39,37 +53,50 @@ To develop a mobile chat application using React Native, providing a user-friend
 - Online and offline data storage.
 
 ## Chat App In Action - Android / IOS
-
 ![Chat App In Action - Android / IOS](assets/readmePics/ChatAppAction.png)
 
 ## Installation and Setup
 
 To get started with chats, follow these steps:
 
+### Prerequisites
+
+Before you begin, ensure you have the following installed on your system:
+
+- [Node.js](https://nodejs.org/) (version 16.x.x): Required for running the JavaScript codebase.
+- [Expo CLI](https://expo.dev/): Install it globally using `npm install -g expo-cli`. This tool is necessary for managing and testing your Expo app.
+- [Watchman](https://facebook.github.io/watchman/): A file-watching service used for React Native development (recommended for macOS users).
+- [Android Studio](https://developer.android.com/studio): Required for Android app development and running an Android emulator.
+- [Xcode](https://developer.apple.com/xcode/): Required for iOS app development and running an iOS simulator (macOS only).
+
+### Node.js Version
+
 1. **Downgrade Node.js to version "16.19.0":**
-   Expo only supports Node.js versions 16 and lower. You can use a version manager like [nvm](https://github.com/nvm-sh/nvm) to manage your Node.js installations.
+   - Expo only supports Node.js versions 16 and lower. You can use a version manager like [nvm](https://github.com/nvm-sh/nvm) to manage your Node.js installations. Install and use Node.js version 16.19.0 by running:
 
-2. **Clone the reposetory or download the ZIP file:**
-   Clone this project using Git or download the ZIP file from the project repository on GitHub.
+     ```sh
+     nvm install 16.19.0
+     nvm use 16.19.0
+     ```
 
-3. **Open your terminal:**
-   Navigate to the root directory of the downloaded or cloned project.
+### Project Setup
 
-4. **Package Installation:**
-   Before you can run the project, make sure to install the following packages and dependencies: in terminal:
-   
-```bash
-npm install --save @react-navigation/native @react-navigation/native-stack
-expo install react-native-screens react-native-safe-area-context
-npm install react-native-gifted-chat --save
-npm install firebase@9.13.0 --save
-expo install @react-native-async-storage/async-storage
-expo install @react-native-community/netinfo
-expo install expo-image-picker
-expo install expo-location
-expo install react-native-maps
-```
+2. **Clone the Repository:**
+   - Clone the chat app repository to your local machine by running:
 
+     ```sh
+     git clone https://github.com/bobs83/chat-app.git
+     cd chat-app
+     ```
+
+3. **Install Dependencies:**
+   - Before you can run the project, navigate to the project directory and install the required packages by running the following in your terminal:
+
+     ```sh
+     npm install
+     ```
+
+After completing these steps, your environment should be set up and ready for development with the chat app.
 
 ## Firebase Configuration and Using Your Own Database
 
