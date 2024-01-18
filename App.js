@@ -36,6 +36,7 @@ const App = () => {
   // Get the network state
   const netInfo = useNetInfo();
 
+  // useEffect Hook to check the network state
   useEffect(() => {
     if (connectionStatus.isConnected === false) {
       Alert.alert("Connection Lost!");
@@ -64,16 +65,6 @@ const App = () => {
 
   // Initialize Cloud Storage and get a reference to the service
   const storage = getStorage(app);
-
-  //will display an alert popup if connection is lost
-  useEffect(() => {
-    if (connectionStatus.isConnected === false) {
-      Alert.alert("Connection lost!");
-      disableNetwork(db);
-    } else if (connectionStatus.isConnected === true) {
-      enableNetwork(db);
-    }
-  }, [connectionStatus.isConnected]);
 
   return (
     <NavigationContainer>

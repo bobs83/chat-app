@@ -167,7 +167,7 @@ const Chat = ({ route, isConnected, db, navigation, storage }) => {
       console.log("Unsubscribing from snapshot");
       unsubscribe(); // Unsubscribe when the component unmounts or isConnected changes
     };
-  }, [isConnected]); // Ensure useEffect is called only when db or isConnected changes
+  }, []); // Ensure useEffect is called only when db or isConnected changes
 
   // Keyboard Avoiding View for different platforms
   const keyboardAvoidingViewProps = Platform.select({
